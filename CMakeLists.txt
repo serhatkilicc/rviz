@@ -16,11 +16,20 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(OGRE OGRE)
 ## Find OGRE Plugin path (not necessarily platform-independent, I guess)
-execute_process(COMMAND 
-pkg-config --variable=plugindir OGRE 
-OUTPUT_VARIABLE OGRE_PLUGIN_PATH
-OUTPUT_STRIP_TRAILING_WHITESPACE
+execute_process(COMMAND
+  pkg-config --variable=plugindir OGRE
+  OUTPUT_VARIABLE OGRE_PLUGIN_PATH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+if(APPLE)
+  # Find the Cocoa Framework
+  set(PREVIOUS_CMAKE_FIND_FRAMEWORK ${CMAKE_FIND_FRAMEWORK})
+  set(CMAKE_FIND_FRAMEWORK "ONLY")
+  find_library(COCOA_FRAMEWORKS Cocoa)
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${COCOA_FRAMEWORKS})
+  set(CMAKE_FIND_FRAMEWORK ${PREVIOUS_CMAKE_FIND_FRAMEWORK})
+endif()
+message("OGRE_LIBRARIES: ${OGRE_LIBRARIES}")
 message(STATUS OGRE_PLUGIN_PATH=${OGRE_PLUGIN_PATH})
 
 find_package(OpenGL REQUIRED)
