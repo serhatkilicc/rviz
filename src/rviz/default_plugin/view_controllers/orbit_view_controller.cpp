@@ -41,6 +41,7 @@
 #include "rviz/ogre_helpers/shape.h"
 #include "rviz/properties/float_property.h"
 #include "rviz/properties/vector_property.h"
+#include "rviz/properties/enum_property.h"
 #include "rviz/uniform_string_stream.h"
 #include "rviz/viewport_mouse_event.h"
 #include "rviz/load_resource.h"
@@ -58,6 +59,8 @@ namespace rviz
 OrbitViewController::OrbitViewController()
   : dragging_( false )
 {
+  up_axis_property_->setHidden(false);
+
   distance_property_ = new FloatProperty( "Distance", DISTANCE_START, "Distance from the focal point.", this );
   distance_property_->setMin( 0.01 );
 
@@ -256,9 +259,10 @@ void OrbitViewController::updateCamera()
   float z = distance *              sin( pitch ) + focal_point.z;
 
   Ogre::Vector3 pos( x, y, z );
+  pos = getCameraRotationMatrix() * pos;
 
   camera_->setPosition(pos);
-  camera_->setFixedYawAxis(true, target_scene_node_->getOrientation() * Ogre::Vector3::UNIT_Z);
+  camera_->setFixedYawAxis(true, Ogre::Quaternion(getCameraRotationMatrix()) * target_scene_node_->getOrientation() * Ogre::Vector3::UNIT_Z);
   camera_->setDirection(target_scene_node_->getOrientation() * (focal_point - pos));
 
   focal_shape_->setPosition( focal_point );
