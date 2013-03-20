@@ -44,6 +44,7 @@ class Camera;
 class SceneNode;
 class Vector3;
 class Quaternion;
+class Matrix3;
 }
 
 namespace rviz
@@ -148,14 +149,31 @@ public:
   /** @return A mouse cursor representing the current state */
   virtual QCursor getCursor() { return cursor_; }
 
+  Ogre::Vector3 getUpAxis();
+  Ogre::Vector3 getLeftAxis();
+  Ogre::Vector3 getFwdAxis();
+  Ogre::Matrix3 getCameraRotationMatrix();
+
 Q_SIGNALS:
   void configChanged();
 
 private Q_SLOTS:
 
-  void updateNearClipDistance();
+  virtual void updateNearClipDistance();
+
+  virtual void updateUpAxis();
 
 protected:
+
+  enum {
+    X_AXIS,
+    Y_AXIS,
+    Z_AXIS,
+    NEG_X_AXIS,
+    NEG_Y_AXIS,
+    NEG_Z_AXIS
+  };
+
   /** @brief Do subclass-specific initialization.  Called by
    * ViewController::initialize after context_ and camera_ are set.
    * Default implementation does nothing. */
@@ -185,6 +203,7 @@ protected:
   QCursor cursor_;
 
   FloatProperty* near_clip_property_;
+  EnumProperty* up_axis_property_;
 
   void setStatus( const QString & message );
 

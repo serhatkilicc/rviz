@@ -62,7 +62,73 @@ ViewController::ViewController()
                                       this, SLOT( updateNearClipDistance() ) );
   near_clip_property_->setMin( 0.001 );
   near_clip_property_->setMax( 10000 );
+
+  up_axis_property_ = new EnumProperty( "Up Axis", "Z",
+                                      "Axis to use as the 'up' direction. Choose Z for regular coordinate frames, Y for optical frames.",
+                                      this, SLOT( updateUpAxis() ) );
+  up_axis_property_->addOption( "X", X_AXIS );
+  up_axis_property_->addOption( "Y", Y_AXIS );
+  up_axis_property_->addOption( "Z", Z_AXIS );
+  up_axis_property_->addOption( "-X", NEG_X_AXIS );
+  up_axis_property_->addOption( "-Y", NEG_Y_AXIS );
+  up_axis_property_->addOption( "-Z", NEG_Z_AXIS );
+  up_axis_property_->setHidden(true);
 }
+
+Ogre::Vector3 ViewController::getUpAxis()
+{
+  switch ( up_axis_property_->getOptionInt() )
+  {
+    case X_AXIS:
+      return Ogre::Vector3::UNIT_X;
+    case Y_AXIS:
+      return Ogre::Vector3::UNIT_Y;
+    case Z_AXIS:
+      return Ogre::Vector3::UNIT_Z;
+    case NEG_X_AXIS:
+      return -1.0*Ogre::Vector3::UNIT_X;
+    case NEG_Y_AXIS:
+      return -1.0*Ogre::Vector3::UNIT_Y;
+    case NEG_Z_AXIS:
+      return -1.0*Ogre::Vector3::UNIT_Z;
+    default:
+      return Ogre::Vector3::UNIT_Z;
+  }
+}
+
+Ogre::Vector3 ViewController::getLeftAxis()
+{
+  switch ( up_axis_property_->getOptionInt() )
+  {
+    case X_AXIS:
+      return -1.0*Ogre::Vector3::UNIT_Y;
+    case NEG_X_AXIS:
+      return Ogre::Vector3::UNIT_Y;
+    case Y_AXIS:
+      return Ogre::Vector3::UNIT_X;
+    case NEG_Y_AXIS:
+      return -1.0*Ogre::Vector3::UNIT_X; //optical camera frame (right/down/fwd)
+    case Z_AXIS:
+      return Ogre::Vector3::UNIT_Y; // regular frame (fwd/left/up)
+    case NEG_Z_AXIS:
+      return -1.0*Ogre::Vector3::UNIT_Y; // North-East-Down (fwd/right/down)
+    default:
+      return -1.0*Ogre::Vector3::UNIT_Y;
+  }
+}
+
+Ogre::Vector3 ViewController::getFwdAxis()
+{
+  return getLeftAxis().crossProduct(getUpAxis());
+}
+
+Ogre::Matrix3 ViewController::getCameraRotationMatrix()
+{
+  Ogre::Matrix3 rot;
+  rot.FromAxes(getFwdAxis(),getLeftAxis(),getUpAxis());
+  return rot;
+}
+
 
 void ViewController::initialize( DisplayContext* context )
 {
@@ -223,6 +289,10 @@ void ViewController::updateNearClipDistance()
 {
   float n = near_clip_property_->getFloat();
   camera_->setNearClipDistance( n );
+}
+
+void ViewController::updateUpAxis()
+{
 }
 
 
