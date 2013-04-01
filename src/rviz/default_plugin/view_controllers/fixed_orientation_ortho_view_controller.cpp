@@ -38,6 +38,7 @@
 #include "rviz/ogre_helpers/orthographic.h"
 #include "rviz/ogre_helpers/shape.h"
 #include "rviz/properties/float_property.h"
+#include "rviz/properties/enum_property.h"
 #include "rviz/viewport_mouse_event.h"
 
 #include "rviz/default_plugin/view_controllers/fixed_orientation_ortho_view_controller.h"
@@ -52,6 +53,7 @@ FixedOrientationOrthoViewController::FixedOrientationOrthoViewController()
   angle_property_ = new FloatProperty( "Angle", 0, "Angle around the Z axis to rotate.", this );
   x_property_ = new FloatProperty( "X", 0, "X component of camera position.", this );
   y_property_ = new FloatProperty( "Y", 0, "Y component of camera position.", this );
+  up_axis_property_->setHidden(false);
 }
 
 FixedOrientationOrthoViewController::~FixedOrientationOrthoViewController()
@@ -144,7 +146,7 @@ void FixedOrientationOrthoViewController::handleMouseEvent(ViewportMouseEvent& e
 
 void FixedOrientationOrthoViewController::orientCamera()
 {
-  camera_->setOrientation( Ogre::Quaternion( Ogre::Radian( angle_property_->getFloat() ), Ogre::Vector3::UNIT_Z ));
+  camera_->setOrientation( Ogre::Quaternion( getCameraRotationMatrix() ) * Ogre::Quaternion( Ogre::Radian( angle_property_->getFloat() ), Ogre::Vector3::UNIT_Z ));
 }
 
 void FixedOrientationOrthoViewController::mimic( ViewController* source_view )
@@ -198,7 +200,7 @@ void FixedOrientationOrthoViewController::updateCamera()
   // For Z, we use half of the far-clip distance set in
   // selection_context.cpp, so that the shader program which computes
   // depth can see equal distances above and below the Z=0 plane.
-  camera_->setPosition( x_property_->getFloat(), y_property_->getFloat(), 500 );
+  camera_->setPosition( getCameraRotationMatrix() * Ogre::Vector3( x_property_->getFloat(), y_property_->getFloat(), 500 ) );
 }
 
 void FixedOrientationOrthoViewController::setPosition( const Ogre::Vector3& pos_rel_target )
