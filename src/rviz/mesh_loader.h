@@ -35,6 +35,7 @@
 namespace rviz
 {
   Ogre::MeshPtr loadMeshFromResource(const std::string& resource_path);
+
 } // namespace rviz
 
 #endif // RVIZ_MESH_LOADER_H
