@@ -917,11 +917,8 @@ void PointCloudCommon::addMessage(const sensor_msgs::PointCloudConstPtr& cloud)
 
 void PointCloudCommon::addMessage(const sensor_msgs::PointCloud2ConstPtr& cloud)
 {
-  if (cloud->width * cloud->height == 0)
-  {
-    return;
-  }
-
+  // Process the cloud. Even if it is empty, we do this to get
+  // rid of any points that have previously been displayed.
   processMessage(cloud);
 }
 
