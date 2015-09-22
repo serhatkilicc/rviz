@@ -88,7 +88,8 @@ MapDisplay::MapDisplay()
   color_scheme_property_->addOption( "jet (256 levels)", 3 );
   color_scheme_property_->addOption( "hot (101 levels)", 4 );
   color_scheme_property_->addOption( "hot (256 levels)", 5 );
-  
+  color_scheme_property_->addOption( "Viridis", 6 );
+
   draw_under_property_ = new Property( "Draw Behind", false,
                                        "Rendering option, controls whether or not the map is always"
                                        " drawn behind everything else.",
@@ -101,7 +102,7 @@ MapDisplay::MapDisplay()
   width_property_ = new IntProperty( "Width", 0,
                                      "Width of the map, in meters. (not editable)", this );
   width_property_->setReadOnly( true );
-  
+
   height_property_ = new IntProperty( "Height", 0,
                                       "Height of the map, in meters. (not editable)", this );
   height_property_->setReadOnly( true );
@@ -244,6 +245,12 @@ unsigned char* makeHotPalette101() {
   return palette;
 }
 
+unsigned char* makeViridisPalette(){
+  static unsigned char palette[] = {
+    26, 0, 32, 26, 0, 33, 26, 1, 34, 27, 1, 34, 27, 2, 35, 27, 3, 35, 27, 3, 36, 27, 4, 37, 27, 5, 37, 27, 5, 38, 27, 6, 38, 27, 6, 39, 28, 7, 39, 28, 7, 40, 28, 8, 40, 28, 8, 41, 28, 9, 41, 28, 10, 42, 28, 10, 42, 28, 11, 43, 28, 11, 43, 28, 12, 44, 28, 12, 44, 28, 13, 44, 28, 13, 45, 28, 14, 45, 28, 14, 46, 28, 15, 46, 28, 15, 46, 28, 16, 47, 28, 16, 47, 27, 17, 47, 27, 17, 48, 27, 18, 48, 27, 18, 48, 27, 19, 49, 27, 19, 49, 27, 19, 49, 27, 20, 50, 27, 20, 50, 27, 21, 50, 26, 21, 50, 26, 22, 51, 26, 22, 51, 26, 23, 51, 26, 23, 51, 26, 24, 52, 26, 24, 52, 25, 25, 52, 25, 25, 52, 25, 26, 52, 25, 26, 52, 25, 26, 53, 25, 27, 53, 24, 27, 53, 24, 28, 53, 24, 28, 53, 24, 29, 53, 24, 29, 53, 23, 30, 54, 23, 30, 54, 23, 30, 54, 23, 31, 54, 23, 31, 54, 22, 32, 54, 22, 32, 54, 22, 33, 54, 22, 33, 54, 22, 33, 54, 22, 34, 54, 21, 34, 55, 21, 35, 55, 21, 35, 55, 21, 35, 55, 21, 36, 55, 20, 36, 55, 20, 37, 55, 20, 37, 55, 20, 37, 55, 20, 38, 55, 19, 38, 55, 19, 39, 55, 19, 39, 55, 19, 39, 55, 19, 40, 55, 19, 40, 55, 18, 41, 55, 18, 41, 55, 18, 41, 55, 18, 42, 55, 18, 42, 55, 18, 42, 55, 17, 43, 55, 17, 43, 55, 17, 44, 55, 17, 44, 55, 17, 44, 55, 17, 45, 55, 16, 45, 55, 16, 45, 55, 16, 46, 55, 16, 46, 55, 16, 47, 55, 16, 47, 55, 16, 47, 55, 15, 48, 55, 15, 48, 55, 15, 48, 55, 15, 49, 55, 15, 49, 55, 15, 50, 55, 15, 50, 55, 14, 50, 55, 14, 51, 55, 14, 51, 55, 14, 51, 55, 14, 52, 55, 14, 52, 55, 14, 53, 55, 13, 53, 55, 13, 53, 55, 13, 54, 55, 13, 54, 55, 13, 54, 55, 13, 55, 55, 13, 55, 55, 12, 55, 55, 12, 56, 55, 12, 56, 55, 12, 57, 54, 12, 57, 54, 12, 57, 54, 12, 58, 54, 12, 58, 54, 12, 58, 54, 12, 59, 54, 12, 59, 54, 12, 60, 54, 11, 60, 54, 11, 60, 54, 11, 61, 53, 11, 61, 53, 11, 61, 53, 12, 62, 53, 12, 62, 53, 12, 62, 53, 12, 63, 53, 12, 63, 52, 12, 64, 52, 12, 64, 52, 12, 64, 52, 13, 65, 52, 13, 65, 51, 13, 65, 51, 13, 66, 51, 14, 66, 51, 14, 66, 51, 14, 67, 50, 15, 67, 50, 15, 68, 50, 15, 68, 50, 16, 68, 49, 16, 69, 49, 17, 69, 49, 17, 69, 49, 18, 70, 48, 18, 70, 48, 19, 70, 48, 19, 71, 47, 20, 71, 47, 20, 71, 47, 21, 72, 46, 22, 72, 46, 22, 72, 46, 23, 73, 45, 23, 73, 45, 24, 73, 45, 25, 74, 44, 25, 74, 44, 26, 74, 44, 27, 75, 43, 28, 75, 43, 28, 75, 42, 29, 76, 42, 30, 76, 41, 31, 76, 41, 31, 77, 41, 32, 77, 40, 33, 77, 40, 34, 78, 39, 35, 78, 39, 36, 78, 38, 36, 78, 38, 37, 79, 37, 38, 79, 37, 39, 79, 36, 40, 80, 36, 41, 80, 35, 42, 80, 35, 43, 80, 34, 44, 81, 34, 44, 81, 33, 45, 81, 32, 46, 81, 32, 47, 82, 31, 48, 82, 31, 49, 82, 30, 50, 82, 30, 51, 83, 29, 52, 83, 28, 53, 83, 28, 54, 83, 27, 55, 84, 26, 56, 84, 26, 57, 84, 25, 58, 84, 24, 59, 84, 24, 60, 85, 23, 61, 85, 23, 62, 85, 22, 63, 85, 21, 64, 85, 20, 65, 86, 20, 66, 86, 19, 67, 86, 18, 68, 86, 18, 69, 86, 17, 70, 86, 16, 72, 87, 16, 73, 87, 15, 74, 87, 14, 75, 87, 14, 76, 87, 13, 77, 87, 13, 78, 87, 12, 79, 88, 12, 80, 88, 11, 81, 88, 11, 82, 88, 10, 83, 88, 10, 84, 88, 9, 85, 88, 9, 86, 88, 9, 87, 89, 9, 88, 89, 9, 89, 89, 9, 90, 89, 9, 91, 89, 10, 92, 89, 10, 93, 89, 10, 94, 89, 11, 95, 90, 11, 96, 90, 12, 97, 90, 13, 98, 90, 13, 99, 90, 14
+  };
+}
+
 Ogre::TexturePtr makePaletteTexture( unsigned char *palette_bytes )
 {
   Ogre::DataStreamPtr palette_stream;
@@ -261,21 +268,24 @@ void MapDisplay::onInitialize()
   // Order of palette textures here must match option indices for color_scheme_property_ above.
   palette_textures_.push_back( makePaletteTexture( makeMapPalette() ));
   color_scheme_transparency_.push_back( false );
-  
+
   palette_textures_.push_back( makePaletteTexture( makeCostmapPalette() ));
   color_scheme_transparency_.push_back( true );
-  
+
   palette_textures_.push_back( makePaletteTexture( makeJetPalette101() ));
   color_scheme_transparency_.push_back( true );
-  
+
   palette_textures_.push_back( makePaletteTexture( makeJetPalette256() ));
   color_scheme_transparency_.push_back( false );
-  
+
   palette_textures_.push_back( makePaletteTexture( makeHotPalette101() ));
   color_scheme_transparency_.push_back( true );
-  
+
   palette_textures_.push_back( makePaletteTexture( makeHotPalette256() ));
   color_scheme_transparency_.push_back( false );
+
+  palette_textures_.push_back( makePaletteTexture( makeViridisPalette() ));
+  color_scheme_transparency_.push_back( true );
 
   // Set up map material
   static int material_count = 0;
